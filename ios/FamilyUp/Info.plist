@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleDisplayName</key>
+  <string>FamilyUp</string>
+  <key>CFBundleExecutable</key>
+  <string>$(EXECUTABLE_NAME)</string>
+  <key>CFBundleIdentifier</key>
+  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>$(PRODUCT_NAME)</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0.0</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>LSRequiresIPhoneOS</key>
+  <true/>
+  <key>UILaunchStoryboardName</key>
+  <string>LaunchScreen</string>
+  <key>UIRequiredDeviceCapabilities</key>
+  <array>
+    <string>armv7</string>
+    <string>metal</string>
+  </array>
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
+  <key>UISupportedInterfaceOrientations~ipad</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
+  <key>UIViewControllerBasedStatusBarAppearance</key>
+  <false/>
+  <key>UIAppFonts</key>
+  <array />
+
+  <!-- ================================================ -->
+  <!-- CRITICAL PRIVACY SETTINGS - DO NOT MODIFY -->
+  <!-- ================================================ -->
+
+  <!-- NO LOCATION TRACKING -->
+  <!-- These keys are INTENTIONALLY OMITTED: -->
+  <!-- NSLocationWhenInUseUsageDescription -->
+  <!-- NSLocationAlwaysUsageDescription -->
+  <!-- NSLocationAlwaysAndWhenInUseUsageDescription -->
+  <!-- This app NEVER accesses location services -->
+
+  <!-- App Privacy Description -->
+  <key>NSPrivacyTracking</key>
+  <false/>
+  <key>NSPrivacyTrackingDomains</key>
+  <array/>
+  <key>NSPrivacyCollectedDataTypes</key>
+  <array/>
+  <key>NSPrivacyAccessedAPITypes</key>
+  <array/>
+
+  <!-- User Privacy Notice -->
+  <key>NSUserTrackingUsageDescription</key>
+  <string>This app does not track you. This permission will never be requested.</string>
+
+  <!-- Photo Library (NOT USED - just for completeness) -->
+  <!-- <key>NSPhotoLibraryUsageDescription</key> -->
+  <!-- <string>This app does not access your photos.</string> -->
+
+  <!-- Camera (NOT USED) -->
+  <!-- <key>NSCameraUsageDescription</key> -->
+  <!-- <string>This app does not access your camera.</string> -->
+
+  <!-- Microphone (NOT USED) -->
+  <!-- <key>NSMicrophoneUsageDescription</key> -->
+  <!-- <string>This app does not access your microphone.</string> -->
+
+  <!-- Contacts (NOT USED) -->
+  <!-- <key>NSContactsUsageDescription</key> -->
+  <!-- <string>This app does not access your contacts.</string> -->
+
+  <!-- ================================================ -->
+  <!-- APP TRANSPORT SECURITY -->
+  <!-- ================================================ -->
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <false/>
+    <key>NSExceptionDomains</key>
+    <dict>
+      <key>localhost</key>
+      <dict>
+        <key>NSExceptionAllowsInsecureHTTPLoads</key>
+        <true/>
+      </dict>
+    </dict>
+  </dict>
+
+  <!-- ================================================ -->
+  <!-- APP METADATA -->
+  <!-- ================================================ -->
+  <key>NSHumanReadableCopyright</key>
+  <string>© 2025 FamilyUp. All rights reserved.</string>
+
+  <!-- App Category -->
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.education</string>
+
+  <!-- ================================================ -->
+  <!-- PRIVACY COMPLIANCE NOTES -->
+  <!-- ================================================ -->
+  <!--
+  This app is designed with privacy-first principles:
+
+  1. NO LOCATION TRACKING
+     - No NSLocation* keys defined
+     - App never requests location permissions
+     - All data is aggregate county-level statistics
+
+  2. NO USER DATA COLLECTION
+     - No analytics frameworks
+     - No crash reporting with PII
+     - No advertising SDKs
+     - No user accounts or profiles
+
+  3. AGGREGATE DATA ONLY
+     - Displays only publicly available county statistics
+     - Source: Michigan DHHS, AFCARS FY 2023
+     - Minimum 5 children per county (de-identification)
+
+  4. LEGAL COMPLIANCE
+     - COPPA compliant (no data on children under 13)
+     - FERPA compliant (no educational records)
+     - HIPAA compliant (no health information)
+     - Michigan Child Protection Law compliant
+
+  5. APP STORE PRIVACY LABEL
+     - Data Not Collected
+     - No tracking across apps or websites
+     - No data linked to user
+  -->
+
+</dict>
+</plist>

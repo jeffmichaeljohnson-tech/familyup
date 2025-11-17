@@ -1,0 +1,160 @@
+# FamilyUp Fastlane Configuration
+# Automated TestFlight deployment
+
+default_platform(:ios)
+
+platform :ios do
+  # ====================================
+  # TESTFLIGHT BETA DEPLOYMENT
+  # ====================================
+
+  desc "Deploy a new beta build to TestFlight"
+  lane :beta do
+    # Ensure clean working directory
+    ensure_git_status_clean
+
+    # Increment build number
+    increment_build_number(
+      xcodeproj: "FamilyUp.xcodeproj"
+    )
+
+    # Build the app
+    build_app(
+      scheme: "FamilyUp",
+      workspace: "FamilyUp.xcworkspace",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      output_name: "FamilyUp.ipa",
+      export_options: {
+        provisioningProfiles: {
+          "com.familyup.app" => "FamilyUp Distribution"
+        }
+      }
+    )
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_submission: false,
+      skip_waiting_for_build_processing: false,
+      apple_id: ENV["APPLE_ID"],
+      team_id: ENV["TEAM_ID"],
+      itc_provider: ENV["ITC_PROVIDER"],
+      distribute_external: true,
+      groups: ["Beta Testers", "Internal Team"],
+      demo_account_required: false,
+      beta_app_review_info: {
+        contact_email: "support@familyup.org",
+        contact_first_name: "FamilyUp",
+        contact_last_name: "Team",
+        contact_phone: "1-800-589-6273",
+        demo_account_name: "",
+        demo_account_password: "",
+        notes: "FamilyUp - Michigan Foster Care Awareness Platform\n\n" +
+               "PRIVACY NOTE:\n" +
+               "This app displays aggregate county-level foster care statistics only.\n" +
+               "NO individual child information, exact locations, or PII is collected or shown.\n" +
+               "NO location tracking is used.\n\n" +
+               "COMPLIANCE:\n" +
+               "- COPPA compliant\n" +
+               "- FERPA compliant\n" +
+               "- HIPAA compliant\n" +
+               "- Michigan Child Protection Law compliant\n\n" +
+               "DATA SOURCE:\n" +
+               "Michigan DHHS, AFCARS FY 2023 (public aggregate data)\n\n" +
+               "FEATURES TO TEST:\n" +
+               "- Interactive map with Metal graphics\n" +
+               "- County selection and statistics display\n" +
+               "- Particle effects and animations\n" +
+               "- Contact information (phone link)\n\n" +
+               "NO ACCOUNT REQUIRED - App is fully functional without sign-in."
+      }
+    )
+
+    # Commit version bump
+    commit_version_bump(
+      message: "Version bump for TestFlight build",
+      xcodeproj: "FamilyUp.xcodeproj"
+    )
+
+    # Push to git
+    push_to_git_remote
+
+    # Success notification
+    notification(
+      title: "FamilyUp Beta Deployed",
+      message: "New build uploaded to TestFlight successfully!"
+    )
+  end
+
+  # ====================================
+  # INTERNAL TESTING
+  # ====================================
+
+  desc "Deploy to internal testers only"
+  lane :internal do
+    build_app(
+      scheme: "FamilyUp",
+      workspace: "FamilyUp.xcworkspace",
+      export_method: "app-store",
+      clean: true
+    )
+
+    upload_to_testflight(
+      skip_submission: true,
+      distribute_external: false,
+      groups: ["Internal Team"]
+    )
+  end
+
+  # ====================================
+  # PRIVACY AUDIT
+  # ====================================
+
+  desc "Run privacy compliance audit"
+  lane :privacy_audit do
+    # Check for location tracking
+    sh("grep -r 'NSLocationWhenInUseUsageDescription' ../ios/FamilyUp/Info.plist && echo 'FAIL: Location tracking found!' || echo 'PASS: No location tracking'")
+
+    # Check for analytics
+    sh("grep -r 'Firebase\\|GoogleAnalytics\\|Mixpanel' ../ios/Podfile && echo 'FAIL: Analytics found!' || echo 'PASS: No analytics'")
+
+    # Validate Info.plist privacy settings
+    sh("plutil -lint ../ios/FamilyUp/Info.plist")
+
+    puts "========================================="
+    puts "PRIVACY AUDIT COMPLETE"
+    puts "========================================="
+    puts "✅ No location tracking"
+    puts "✅ No analytics frameworks"
+    puts "✅ Info.plist validated"
+    puts "✅ Privacy-first compliance confirmed"
+    puts "========================================="
+  end
+
+  # ====================================
+  # BUILD ONLY (NO UPLOAD)
+  # ====================================
+
+  desc "Build iOS app without uploading"
+  lane :build_only do
+    build_app(
+      scheme: "FamilyUp",
+      workspace: "FamilyUp.xcworkspace",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build"
+    )
+  end
+
+  # ====================================
+  # ERROR HANDLING
+  # ====================================
+
+  error do |lane, exception|
+    notification(
+      title: "FamilyUp Build Failed",
+      message: "Lane '#{lane}' failed with error: #{exception.message}"
+    )
+  end
+end

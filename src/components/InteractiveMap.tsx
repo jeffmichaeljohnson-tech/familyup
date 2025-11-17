@@ -126,59 +126,54 @@ export function InteractiveMap({ counties, onCountyClick }: InteractiveMapProps)
         el.style.boxShadow = `0 0 ${radius}px ${color}80`;
       });
 
-      // Click handler
-      el.addEventListener('click', () => {
-        onCountyClick?.(county);
-
-        // Show popup with county info
-        const popup = new mapboxgl.Popup({ offset: 25 })
-          .setHTML(`
-            <div style="padding: 16px; min-width: 250px;">
-              <h3 style="font-size: 18px; font-weight: bold; color: #1e3a8a; margin-bottom: 8px;">
-                ${county.name}
-              </h3>
-              <hr style="margin: 8px 0; border-color: #e5e7eb;" />
-              <div style="font-size: 14px; color: #374151; line-height: 1.6;">
-                <p style="margin: 4px 0;">
-                  <strong>Total in Care:</strong> ${county.totalChildren.toLocaleString()}
-                </p>
-                <p style="margin: 4px 0;">
-                  <strong>Waiting for Adoption:</strong> ${county.waitingAdoption.toLocaleString()}
-                </p>
-                <div style="margin-top: 12px;">
-                  <p style="font-weight: 600; margin-bottom: 4px;">Age Breakdown:</p>
-                  <ul style="list-style: none; padding-left: 0;">
-                    <li>• Ages 0-5: ${county.ageBreakdown['0-5']}</li>
-                    <li>• Ages 6-10: ${county.ageBreakdown['6-10']}</li>
-                    <li>• Ages 11-17: ${county.ageBreakdown['11-17']}</li>
-                  </ul>
-                </div>
-                <div style="margin-top: 12px; padding: 8px; background: #fef3c7; border-radius: 4px;">
-                  <p style="font-size: 12px; color: #92400e;">
-                    <strong>Privacy Note:</strong> Icons show aggregate county data only, not actual child locations.
-                  </p>
-                </div>
-                <a
-                  href="tel:1-800-589-6273"
-                  style="display: block; margin-top: 12px; padding: 10px; background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white; text-align: center; border-radius: 6px; text-decoration: none; font-weight: 600;"
-                >
-                  📞 Call MARE: 1-800-589-6273
-                </a>
+      // Create popup content
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`
+          <div style="padding: 16px; min-width: 250px;">
+            <h3 style="font-size: 18px; font-weight: bold; color: #1e3a8a; margin-bottom: 8px;">
+              ${county.name}
+            </h3>
+            <hr style="margin: 8px 0; border-color: #e5e7eb;" />
+            <div style="font-size: 14px; color: #374151; line-height: 1.6;">
+              <p style="margin: 4px 0;">
+                <strong>Total in Care:</strong> ${county.totalChildren.toLocaleString()}
+              </p>
+              <p style="margin: 4px 0;">
+                <strong>Waiting for Adoption:</strong> ${county.waitingAdoption.toLocaleString()}
+              </p>
+              <div style="margin-top: 12px;">
+                <p style="font-weight: 600; margin-bottom: 4px;">Age Breakdown:</p>
+                <ul style="list-style: none; padding-left: 0;">
+                  <li>• Ages 0-5: ${county.ageBreakdown['0-5']}</li>
+                  <li>• Ages 6-10: ${county.ageBreakdown['6-10']}</li>
+                  <li>• Ages 11-17: ${county.ageBreakdown['11-17']}</li>
+                </ul>
               </div>
+              <div style="margin-top: 12px; padding: 8px; background: #fef3c7; border-radius: 4px;">
+                <p style="font-size: 12px; color: #92400e;">
+                  <strong>Privacy Note:</strong> Icons show aggregate county data only, not actual child locations.
+                </p>
+              </div>
+              <a
+                href="tel:1-800-589-6273"
+                style="display: block; margin-top: 12px; padding: 10px; background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white; text-align: center; border-radius: 6px; text-decoration: none; font-weight: 600;"
+              >
+                📞 Call MARE: 1-800-589-6273
+              </a>
             </div>
-          `);
+          </div>
+        `);
 
-        new mapboxgl.Marker(el)
-          .setLngLat([county.lng, county.lat])
-          .setPopup(popup)
-          .addTo(map.current!)
-          .togglePopup();
-      });
-
-      // Add marker to map
+      // Add marker to map with popup attached
       const marker = new mapboxgl.Marker(el)
         .setLngLat([county.lng, county.lat])
+        .setPopup(popup)
         .addTo(map.current!);
+
+      // Click handler to trigger both popup and callback
+      el.addEventListener('click', () => {
+        onCountyClick?.(county);
+      });
 
       markers.push(marker);
     });

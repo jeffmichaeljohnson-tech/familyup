@@ -8,7 +8,7 @@
  * LEGAL: Compliant with COPPA, FERPA, HIPAA, Michigan state laws
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { GraphicsToggle } from './components/GraphicsToggle';
 import { michiganCounties, stateSummary } from './data/countyData';
 import { CountyData } from './types';
@@ -22,10 +22,10 @@ function App() {
   debugLog(`App loaded with ${michiganCounties.length} counties`);
   debugLog('First 5 counties', michiganCounties.slice(0, 5).map(c => ({ name: c.name, lat: c.lat, lng: c.lng })));
 
-  const handleCountyClick = (county: CountyData) => {
+  const handleCountyClick = useCallback((county: CountyData) => {
     setSelectedCounty(county);
     console.log('Selected county:', county.name);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">

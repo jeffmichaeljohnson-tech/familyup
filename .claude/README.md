@@ -1,5 +1,32 @@
 # FamilyUp - Claude Code MCP Configuration
 
+## Setup
+
+**First time setup:**
+
+Run the setup script to create your local configuration files:
+
+```bash
+./scripts/setup-claude.sh
+```
+
+This will:
+1. Create `.claude/settings.json` from the template
+2. Create `.mcp.json` from the template
+3. Update database paths automatically
+
+After running the setup script, edit the created files and add your API keys:
+- `GITHUB_PERSONAL_ACCESS_TOKEN` - Your GitHub personal access token
+- `BRAVE_API_KEY` - Your Brave Search API key (optional)
+
+**Manual setup:**
+
+If you prefer to set up manually:
+1. Copy `.claude/settings.json.example` to `.claude/settings.json`
+2. Copy `.mcp.json.example` to `.mcp.json`
+3. Edit both files and add your API keys
+4. Update the SQLite database path to your project location
+
 ## MCP Servers Configured
 
 This project has the following Model Context Protocol (MCP) servers configured:

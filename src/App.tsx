@@ -28,23 +28,33 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-gradient-to-r from-brand-blue to-brand-light text-white py-4 px-6 shadow-lg z-20">
+      <header className="bg-gradient-to-r from-indigo-900 via-blue-800 to-purple-900 text-white py-6 px-6 shadow-2xl z-20 border-b border-indigo-700">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold">
-            FamilyUp
-          </h1>
-          <p className="text-sm md:text-base opacity-90 mt-1">
-            Michigan Foster Care Awareness Platform - Dramatizing the Scale of Children in Need
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                FamilyUp
+              </h1>
+              <p className="text-sm md:text-base text-blue-100 mt-2 font-medium">
+                Michigan Foster Care Awareness Platform - Dramatizing the Scale of Children in Need
+              </p>
+            </div>
+            <div className="hidden md:flex items-center space-x-3 text-blue-100">
+              <div className="text-right">
+                <div className="text-2xl font-bold">13,596</div>
+                <div className="text-xs opacity-75">Children in Care</div>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Map Container */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-[50vh] lg:min-h-full">
           <GraphicsToggle
             counties={michiganCounties}
             onCountyClick={handleCountyClick}
@@ -52,12 +62,17 @@ function App() {
         </div>
 
         {/* Sidebar */}
-        <aside className="w-full md:w-96 bg-white shadow-xl overflow-y-auto custom-scrollbar z-10">
-          <div className="p-6 space-y-6">
+        <aside className="w-full lg:w-96 xl:w-[28rem] bg-white/95 backdrop-blur-sm shadow-2xl overflow-y-auto custom-scrollbar z-10 border-t lg:border-t-0 lg:border-l border-gray-200/50 max-h-[50vh] lg:max-h-full">
+          <div className="p-6 md:p-8 space-y-8">
             {/* Mission Statement */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500 p-4 rounded-r-lg">
-              <h2 className="text-lg font-bold text-blue-900 mb-2">Our Mission</h2>
-              <p className="text-sm text-blue-800 leading-relaxed">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 p-8 rounded-2xl shadow-lg text-center">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-2xl">🎯</span>
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">Our Mission</h2>
+              <p className="text-base text-blue-800 leading-relaxed max-w-sm mx-auto">
                 Dramatize the vast number of children in Michigan's foster care system
                 to increase awareness and drive adoptions, while maintaining complete privacy
                 and legal compliance.
@@ -65,34 +80,56 @@ function App() {
             </div>
 
             {/* State Statistics */}
-            <div className="space-y-4">
-              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                Statewide Statistics
-              </h2>
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="flex justify-center mb-4">
+                  <div className="w-12 h-12 bg-gray-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">📊</span>
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Statewide Statistics
+                </h2>
+              </div>
 
-              <div className="bg-gradient-to-br from-red-50 to-red-100 border-l-4 border-red-500 p-4 rounded-r-lg">
-                <h3 className="text-3xl font-bold text-red-900">
+              <div className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-2xl">👥</span>
+                  </div>
+                </div>
+                <h3 className="text-5xl font-black text-red-900 tracking-tight mb-4">
                   {stateSummary.totalChildren.toLocaleString()}
                 </h3>
-                <p className="text-sm text-red-800 mt-1">
+                <p className="text-base text-red-800 font-medium max-w-xs mx-auto leading-relaxed">
                   Children in Michigan foster care
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-l-4 border-orange-500 p-4 rounded-r-lg">
-                <h3 className="text-3xl font-bold text-orange-900">
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 bg-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-2xl">⏳</span>
+                  </div>
+                </div>
+                <h3 className="text-5xl font-black text-orange-900 tracking-tight mb-4">
                   {stateSummary.waitingAdoption.toLocaleString()}
                 </h3>
-                <p className="text-sm text-orange-800 mt-1">
+                <p className="text-base text-orange-800 font-medium max-w-xs mx-auto leading-relaxed">
                   Waiting for adoption without identified families
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-500 p-4 rounded-r-lg">
-                <h3 className="text-3xl font-bold text-green-900">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-2xl">🏠</span>
+                  </div>
+                </div>
+                <h3 className="text-5xl font-black text-green-900 tracking-tight mb-4">
                   {stateSummary.adoptionsThisYear.toLocaleString()}+
                 </h3>
-                <p className="text-sm text-green-800 mt-1">
+                <p className="text-base text-green-800 font-medium max-w-xs mx-auto leading-relaxed">
                   Successful adoptions last year
                 </p>
               </div>
@@ -124,11 +161,16 @@ function App() {
             )}
 
             {/* Important Info */}
-            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
-              <h2 className="text-sm font-semibold text-yellow-900 mb-2">
-                💡 Did You Know?
+            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border border-yellow-200 p-8 rounded-2xl shadow-lg text-center">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-yellow-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-2xl">💡</span>
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-yellow-900 mb-6">
+                Did You Know?
               </h2>
-              <p className="text-sm text-yellow-800 leading-relaxed">
+              <p className="text-base text-yellow-800 leading-relaxed max-w-sm mx-auto">
                 Adopting from foster care costs <strong>$0-$150</strong>.
                 Most families receive <strong>$500-$700/month</strong> in financial support.
                 Anyone 18+ can adopt!
@@ -138,11 +180,17 @@ function App() {
             {/* Call to Action */}
             <a
               href="tel:1-800-589-6273"
-              className="block w-full bg-gradient-to-r from-red-600 to-red-500 text-white text-center py-4 px-6 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="block w-full bg-gradient-to-r from-red-600 via-red-500 to-pink-600 text-white text-center py-6 px-6 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 border border-red-400 relative overflow-hidden group"
             >
-              📞 Contact MARE Today
-              <div className="text-sm font-normal opacity-90 mt-1">
-                1-800-589-MARE (6273)
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-center space-x-3 mb-2">
+                  <span className="text-2xl">📞</span>
+                  <span>Contact MARE Today</span>
+                </div>
+                <div className="text-base font-semibold text-red-100">
+                  1-800-589-MARE (6273)
+                </div>
               </div>
             </a>
 
@@ -163,14 +211,16 @@ function App() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-3 px-6 text-center text-sm z-20">
-        <p>
-          Every child deserves a loving, permanent home.
-          <span className="mx-2">•</span>
-          Built with privacy & compassion
-          <span className="mx-2">•</span>
-          © 2025 FamilyUp
-        </p>
+      <footer className="bg-gradient-to-r from-slate-900 via-gray-900 to-slate-900 text-white py-4 px-6 text-center text-sm z-20 border-t border-gray-700">
+        <div className="max-w-7xl mx-auto">
+          <p className="flex items-center justify-center space-x-2 text-gray-300">
+            <span>Every child deserves a loving, permanent home.</span>
+            <span className="text-gray-600">•</span>
+            <span>Built with privacy & compassion</span>
+            <span className="text-gray-600">•</span>
+            <span>© 2025 FamilyUp</span>
+          </p>
+        </div>
       </footer>
     </div>
   );

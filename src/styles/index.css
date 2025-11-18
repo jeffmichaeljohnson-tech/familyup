@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -40,21 +38,22 @@ body {
 
 /* Custom scrollbar for sidebar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
 }
 
 /* Map container */
@@ -103,9 +102,11 @@ body {
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -120,12 +121,55 @@ body {
   }
 }
 
+@keyframes cardGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes buttonPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes textShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
 .fade-in {
-  animation: fadeIn 0.3s ease-in;
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .slide-up {
-  animation: slideUp 0.4s ease-out;
+  animation: slideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-hover-glow {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-hover-glow:hover {
+  animation: cardGlow 2s ease-in-out infinite;
+}
+
+.text-gradient-animate {
+  background: linear-gradient(90deg, #ffffff, #e0e7ff, #ffffff);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: textShimmer 3s linear infinite;
 }
 
 /* Mapbox GL overrides */
@@ -168,11 +212,19 @@ body {
 /* Privacy notice */
 .privacy-notice {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  border-left: 4px solid #f59e0b;
-  padding: 12px 16px;
-  border-radius: 6px;
+  border: 1px solid #f59e0b;
+  padding: 16px 20px;
+  border-radius: 12px;
   font-size: 13px;
   line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.privacy-notice:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15);
 }
 
 /* Performance optimization */
@@ -328,7 +380,17 @@ canvas {
     0 16px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive 3D container */
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .privacy-notice {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    max-width: none !important;
+    margin-bottom: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .three-canvas-container {
     touch-action: pan-x pan-y;
@@ -337,6 +399,39 @@ canvas {
   .performance-stats {
     font-size: 9px;
     padding: 8px;
+  }
+
+  /* Mobile-specific card adjustments */
+  .statistics-card {
+    padding: 1.5rem !important;
+  }
+  
+  .statistics-card h3 {
+    font-size: 2.5rem !important;
+  }
+  
+  .mission-card {
+    padding: 1.5rem !important;
+  }
+  
+  .mission-card .icon {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Small mobile optimizations */
+  .statistics-card h3 {
+    font-size: 2rem !important;
+  }
+  
+  .mission-card h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  .mission-card p {
+    font-size: 0.875rem !important;
   }
 }
 

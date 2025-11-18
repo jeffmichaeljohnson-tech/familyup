@@ -38,7 +38,6 @@ export function InteractiveMap({ counties }: InteractiveMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<string[]>([]);
 
   // Generate child icon positions (aggregate visualization only)
   const childIcons = useMemo(() => {
@@ -145,7 +144,6 @@ export function InteractiveMap({ counties }: InteractiveMapProps) {
     const domMarkers = document.querySelectorAll('.mapboxgl-marker');
     logs.push(`DOM markers visible: ${domMarkers.length.toLocaleString()}`);
 
-    setDebugInfo(logs);
     console.log(`✓ Rendered all ${markers.length.toLocaleString()} child markers in ${renderTime}ms`);
 
     // Cleanup function
@@ -158,14 +156,6 @@ export function InteractiveMap({ counties }: InteractiveMapProps) {
 
   return (
     <div className="relative w-full h-full">
-      {/* Debug Panel */}
-      <div className="absolute top-4 right-4 z-30 bg-black bg-opacity-90 text-green-400 p-4 rounded-lg shadow-2xl max-w-lg max-h-96 overflow-y-auto font-mono text-xs">
-        <h3 className="font-bold text-white mb-2 text-sm">🔍 Live Debug Console</h3>
-        {debugInfo.map((log, i) => (
-          <div key={i} className="mb-1">{log}</div>
-        ))}
-        {debugInfo.length === 0 && <div className="text-gray-500">Waiting for map to load...</div>}
-      </div>
 
       {/* Privacy Notice Overlay */}
       <div className="absolute top-4 left-4 z-10 max-w-md privacy-notice shadow-lg">

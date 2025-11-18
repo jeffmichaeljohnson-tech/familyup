@@ -6,11 +6,24 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
+// Security: Maximum file and total content sizes
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
+const MAX_TOTAL_CONTENT_SIZE = 50 * 1024 * 1024; // 50MB per skill
 // Try multiple possible paths for skills directory
 function findSkillsDir() {
     // Check environment variable first
-    if (process.env.SKILLS_DIR && existsSync(process.env.SKILLS_DIR)) {
-        return process.env.SKILLS_DIR;
+    if (process.env.SKILLS_DIR) {
+        const resolvedPath = path.resolve(process.env.SKILLS_DIR);
+        // Security: Validate SKILLS_DIR points to expected location
+        if (!existsSync(resolvedPath)) {
+            console.warn(`SKILLS_DIR does not exist: ${resolvedPath}`);
+        }
+        else if (!resolvedPath.includes('.claude') && !resolvedPath.includes('Skills')) {
+            console.warn(`SKILLS_DIR points to unexpected location: ${resolvedPath}`);
+        }
+        else {
+            return resolvedPath;
+        }
     }
     const possiblePaths = [
         path.join(process.cwd(), '.claude', 'Skills'),
@@ -123,6 +136,7 @@ export async function loadSkillFromZip(zipPath) {
                 fullContent: '',
             };
             const files = {};
+            let totalContentSize = 0; // Track total content size for security
             zipfile.readEntry();
             zipfile.on('entry', (entry) => {
                 if (/\/$/.test(entry.fileName)) {
@@ -130,8 +144,29 @@ export async function loadSkillFromZip(zipPath) {
                     zipfile.readEntry();
                     return;
                 }
+                // Security: Validate zip entry filename to prevent path traversal attacks
+                if (entry.fileName.includes('..') ||
+                    entry.fileName.startsWith('/') ||
+                    entry.fileName.includes('\\') ||
+                    entry.fileName.length > 255) {
+                    console.warn(`Skipping suspicious zip entry: ${entry.fileName}`);
+                    zipfile.readEntry();
+                    return;
+                }
+                // Security: Check file size before extraction
+                if (entry.uncompressedSize && entry.uncompressedSize > MAX_FILE_SIZE) {
+                    console.warn(`Skipping file too large (${entry.uncompressedSize} bytes): ${entry.fileName}`);
+                    zipfile.readEntry();
+                    return;
+                }
                 extractZipEntryText(zipfile, entry)
                     .then((content) => {
+                    // Security: Check total content size
+                    totalContentSize += Buffer.byteLength(content, 'utf8');
+                    if (totalContentSize > MAX_TOTAL_CONTENT_SIZE) {
+                        reject(new Error(`Skill content exceeds maximum size limit (${MAX_TOTAL_CONTENT_SIZE} bytes)`));
+                        return;
+                    }
                     const fileName = path.basename(entry.fileName);
                     if (fileName === 'SKILL.md') {
                         files.skillMarkdown = content;

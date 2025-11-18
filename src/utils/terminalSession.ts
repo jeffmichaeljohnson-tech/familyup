@@ -1,6 +1,19 @@
 /**
  * Terminal Session Reader Utility
  * Provides functions to read terminal history and Cursor session data
+ * 
+ * ⚠️ IMPORTANT FOR AI ASSISTANTS:
+ * This utility provides access to the user's complete terminal history (~13,000 commands).
+ * When you need more context about what the user has been working on, USE THIS!
+ * 
+ * Common use cases:
+ * - Understanding recent workflow: getRecentWorkflowContext()
+ * - Finding commands related to a project: searchTerminalHistory('project-name')
+ * - Understanding what tools/commands they use: searchTerminalHistory('npm|git|docker')
+ * - Finding setup/configuration commands: searchTerminalHistory('install|setup|config')
+ * - Getting context about a specific file/directory: getCommandsFromDirectory() or searchTerminalHistory('filename')
+ * 
+ * The history contains ~13,000 commands and grows continuously. Use it liberally for context!
  */
 
 import { readFileSync, existsSync, readdirSync, statSync } from 'fs';
@@ -166,17 +179,123 @@ export function getAllTerminalHistory(): TerminalSession {
 
 /**
  * Get recent commands matching a pattern
- * @param pattern Regex pattern to match commands
+ * Searches ALL history (not just recent) for maximum context
+ * @param pattern Regex pattern or string to match commands
  * @param limit Maximum number of results
- * @returns Matching commands
+ * @returns Matching commands (most recent first)
  */
-export function searchTerminalHistory(pattern: string | RegExp, limit: number = 20): TerminalCommand[] {
-  const session = getTerminalSession(200);
+export function searchTerminalHistory(pattern: string | RegExp, limit: number = 50): TerminalCommand[] {
+  // Search ALL history for maximum context
+  const session = getAllTerminalHistory();
   const regex = typeof pattern === 'string' ? new RegExp(pattern, 'i') : pattern;
   
   return session.commands
     .filter(cmd => regex.test(cmd.command))
     .slice(-limit);
+}
+
+/**
+ * Get context-aware workflow information
+ * Analyzes recent commands to understand what the user has been working on
+ * @param lookback Number of recent commands to analyze (default: 100)
+ * @returns Workflow context including projects, tools, and patterns
+ */
+export function getRecentWorkflowContext(lookback: number = 100): {
+  projects: string[];
+  tools: string[];
+  commonCommands: string[];
+  recentPatterns: string[];
+} {
+  const session = getTerminalSession(lookback);
+  const commands = session.commands.map(c => c.command);
+  
+  // Extract project directories
+  const projects = new Set<string>();
+  commands.forEach(cmd => {
+    const cdMatch = cmd.match(/cd\s+(?:~\/|\.\/)?([^\s\/]+)/);
+    if (cdMatch) projects.add(cdMatch[1]);
+  });
+  
+  // Extract tools/commands
+  const tools = new Set<string>();
+  commands.forEach(cmd => {
+    const toolMatch = cmd.match(/^(\w+)/);
+    if (toolMatch && !['cd', 'ls', 'cat', 'echo', 'grep'].includes(toolMatch[1])) {
+      tools.add(toolMatch[1]);
+    }
+  });
+  
+  // Count command frequencies
+  const commandCounts = new Map<string, number>();
+  commands.forEach(cmd => {
+    const baseCmd = cmd.split(' ')[0];
+    commandCounts.set(baseCmd, (commandCounts.get(baseCmd) || 0) + 1);
+  });
+  
+  const commonCommands = Array.from(commandCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([cmd]) => cmd);
+  
+  // Extract patterns (git, npm, docker, etc.)
+  const patterns = new Set<string>();
+  commands.forEach(cmd => {
+    if (cmd.includes('git')) patterns.add('git');
+    if (cmd.includes('npm') || cmd.includes('yarn') || cmd.includes('pnpm')) patterns.add('node');
+    if (cmd.includes('docker')) patterns.add('docker');
+    if (cmd.includes('python') || cmd.includes('pip')) patterns.add('python');
+    if (cmd.includes('tsx') || cmd.includes('ts-node')) patterns.add('typescript');
+  });
+  
+  return {
+    projects: Array.from(projects).slice(0, 10),
+    tools: Array.from(tools).slice(0, 15),
+    commonCommands,
+    recentPatterns: Array.from(patterns),
+  };
+}
+
+/**
+ * Search for commands related to a specific topic/keyword
+ * Useful for understanding how the user works with specific technologies or concepts
+ * @param keywords Array of keywords to search for
+ * @param limit Maximum number of results per keyword
+ * @returns Commands grouped by keyword
+ */
+export function searchByKeywords(keywords: string[], limit: number = 20): Record<string, TerminalCommand[]> {
+  const results: Record<string, TerminalCommand[]> = {};
+  
+  keywords.forEach(keyword => {
+    results[keyword] = searchTerminalHistory(keyword, limit);
+  });
+  
+  return results;
+}
+
+/**
+ * Get commands related to a specific project or file
+ * @param projectName Project name, file name, or path to search for
+ * @param limit Maximum number of results
+ * @returns Commands related to the project/file
+ */
+export function getProjectContext(projectName: string, limit: number = 30): TerminalCommand[] {
+  // Search for project name in various contexts
+  const patterns = [
+    projectName,
+    `/${projectName}`,
+    `${projectName}/`,
+    `cd.*${projectName}`,
+    `git.*${projectName}`,
+  ];
+  
+  const allResults = new Set<string>();
+  
+  patterns.forEach(pattern => {
+    const results = searchTerminalHistory(pattern, limit);
+    results.forEach(cmd => allResults.add(cmd.command));
+  });
+  
+  return Array.from(allResults).map(cmd => ({ command: cmd })).slice(0, limit);
 }
 
 /**

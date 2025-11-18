@@ -7,6 +7,17 @@ node_modules/
 .mcp.json
 .claude/settings.json
 
+# Extracted skills (regeneratable from zip files via: npx tsx scripts/extract-skills-enhanced.ts)
+.claude/Skills/extracted/
+.claude/knowledge/
+.claude/SKILLS_INDEX.md
+.claude/SKILLS_KNOWLEDGE_BASE.md
+.claude/SKILLS_AUTOMATIC_ACCESS.md
+.claude/SKILLS_SETUP_COMPLETE.md
+.claude/SKILLS_LOCATION_ANALYSIS.md
+.claude/SKILLS_DRAWBACKS_SUMMARY.md
+.claude/temp_extract/
+
 # SQLite database
 *.db
 *.sqlite

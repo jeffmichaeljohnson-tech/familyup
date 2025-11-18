@@ -91,7 +91,7 @@ export function getCountyByFips(fips: string): CountyData | undefined {
 /**
  * Get counties by region (placeholder - can be enhanced with regions table)
  */
-export function getCountiesByRegion(region: string): CountyData[] {
+export function getCountiesByRegion(_region: string): CountyData[] {
   // For now, return all counties
   // TODO: Add regions table and filtering
   return loadCountiesFromDB();

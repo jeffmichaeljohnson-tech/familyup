@@ -3,9 +3,13 @@
  *
  * PRIVACY NOTE: This creates RANDOM positions within county boundaries
  * for visualization purposes ONLY. These are NOT real child locations.
+ *
+ * ALGORITHM: Uses computational geometry (point-in-polygon) to ensure
+ * all markers are distributed INSIDE actual Michigan county boundaries.
  */
 
 import { GeoPoint, CountyData, ChildIcon, DistributionCenter } from '../types';
+import { loadCountyBoundaries, generateRandomPointInCounty } from './countyBoundaries';
 
 /**
  * Michigan geographic bounds (for validation)
@@ -17,11 +21,78 @@ const MICHIGAN_BOUNDS = {
   west: -90.4
 };
 
+// Cache county boundaries (loaded once)
+let countyBoundariesCache: Map<string, any> | null = null;
+
+function getCountyBoundaries() {
+  if (!countyBoundariesCache) {
+    countyBoundariesCache = loadCountyBoundaries();
+    console.log(`🎯 County boundaries loaded: ${countyBoundariesCache.size} counties with polygon data`);
+  }
+  return countyBoundariesCache;
+}
+
 /**
  * Generate random child icon positions for a county
  * PRIVACY: All positions are randomly generated for visualization
+ *
+ * NEW: Uses actual county boundary polygons to ensure all points
+ * are distributed INSIDE the county lines using point-in-polygon algorithm
  */
 export function distributeChildrenInCounty(county: CountyData): ChildIcon[] {
+  const icons: ChildIcon[] = [];
+  const { boys, girls } = county.genderBreakdown;
+
+  // Get the actual county boundary polygon
+  const boundaries = getCountyBoundaries();
+  const countyBoundary = boundaries.get(county.name);
+
+  if (!countyBoundary) {
+    console.warn(`⚠️ No boundary found for ${county.name}, using fallback`);
+    // Fallback to old method if boundary not found
+    return distributeChildrenFallback(county);
+  }
+
+  console.log(`✓ Distributing ${boys + girls} children inside ${county.name} boundary`);
+
+  // Distribute boys inside county boundary
+  let iconIndex = 0;
+  for (let i = 0; i < boys; i++) {
+    const position = generateRandomPointInCounty(countyBoundary);
+    if (position) {
+      icons.push({
+        id: `${county.fips}-boy-${iconIndex++}`,
+        position,
+        gender: 'boy',
+        countyFips: county.fips,
+        ageGroup: assignAgeGroup(county.ageBreakdown)
+      });
+    }
+  }
+
+  // Distribute girls inside county boundary
+  iconIndex = 0;
+  for (let i = 0; i < girls; i++) {
+    const position = generateRandomPointInCounty(countyBoundary);
+    if (position) {
+      icons.push({
+        id: `${county.fips}-girl-${iconIndex++}`,
+        position,
+        gender: 'girl',
+        countyFips: county.fips,
+        ageGroup: assignAgeGroup(county.ageBreakdown)
+      });
+    }
+  }
+
+  return icons;
+}
+
+/**
+ * Fallback distribution method (simple circle around county center)
+ * Used when county boundary data is not available
+ */
+function distributeChildrenFallback(county: CountyData): ChildIcon[] {
   const icons: ChildIcon[] = [];
   const centers = county.distributionCenters || [
     { lat: county.lat, lng: county.lng, weight: 1.0 }
@@ -34,7 +105,7 @@ export function distributeChildrenInCounty(county: CountyData): ChildIcon[] {
   centers.forEach((center) => {
     const boysForCenter = Math.round(boys * center.weight);
     for (let i = 0; i < boysForCenter; i++) {
-      const position = generateRandomPosition(center, 0.15); // ~15km radius
+      const position = generateRandomPosition(center, 0.15);
       icons.push({
         id: `${county.fips}-boy-${iconIndex++}`,
         position,

@@ -1,0 +1,1 @@
+{"version":3,"file":"skillTools.d.ts","sourceRoot":"","sources":["../../src/tools/skillTools.ts"],"names":[],"mappings":"AAAA;;GAEG;AAGH,OAAO,EAAE,aAAa,EAAE,MAAM,8BAA8B,CAAC;AAC7D,OAAO,EAAE,eAAe,EAAE,MAAM,gCAAgC,CAAC;AACjE,OAAO,EAAE,SAAS,EAAE,MAAM,yCAAyC,CAAC;AA+DpE;;GAEG;AACH,wBAAgB,kBAAkB,CAChC,MAAM,EAAE,SAAS,EACjB,QAAQ,EAAE,aAAa,EACvB,QAAQ,EAAE,eAAe,GACxB,IAAI,CAyaN"}
